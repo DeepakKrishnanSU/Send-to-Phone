@@ -1,0 +1,76 @@
+# Send to Phone - requirements
+# This is a plain-text checklist, not a pip file. Nothing here is installed with pip.
+
+# ============================================================
+# COMPUTER
+# ============================================================
+Windows 10 or Windows 11
+    tested on: Windows 11, build 10.0.26200
+Windows PowerShell 5.1 (powershell.exe, ships with Windows)
+    the script is run with powershell.exe, not pwsh (PowerShell 7)
+.NET Framework 4.x (ships with Windows)
+    needed for the WinForms dialog and the embedded C# controls (Add-Type)
+Android SDK Platform-Tools (ADB)
+    tested version: 37.0.1
+    expected path:  C:\platform-tools\adb.exe  (change $adb in the script if different)
+    download:       https://developer.android.com/tools/releases/platform-tools
+USB data cable
+    only for the one-time activation (see below)
+KDE Connect for Windows  (OPTIONAL - fallback only)
+    provides kdeconnect-cli.exe, used when ADB can't reach the phone
+    download: https://kdeconnect.kde.org/download.html
+
+# ============================================================
+# PHONE
+# ============================================================
+Android phone with Developer options available
+    tested on: Samsung Galaxy M34 5G
+    Android version: (add yours)
+Developer options enabled
+    Settings > About phone > Software information > tap Build number 7 times (7-9 on some phones)
+USB debugging turned on
+    Settings > Developer options > USB debugging
+KDE Connect Android app  (OPTIONAL - fallback only)
+    requires Android 6.0 or newer
+    paired with the PC at least once
+
+# ============================================================
+# NETWORK
+# ============================================================
+PC and phone on the same network, either:
+    - the phone's Wi-Fi hotspot with the PC connected to it (gateway is found automatically), or
+    - the same Wi-Fi router (set $phoneIp in the script to the phone's IP)
+Note: some Samsung phones cannot run Wi-Fi and hotspot at the same time.
+      That is fine - this setup only needs the hotspot.
+
+# ============================================================
+# ONE-TIME ACTIVATION (needs the USB cable)
+# ============================================================
+1. Plug the phone in via USB and tick "Always allow" on the "Allow USB debugging?" prompt.
+2. Check it is detected:
+       & "C:\platform-tools\adb.exe" devices
+3. Switch ADB to network mode:
+       & "C:\platform-tools\adb.exe" tcpip 5555
+4. Unplug the cable.
+
+Repeat this activation after:
+    - the phone restarts or shuts down
+    - USB debugging is toggled off and on
+    - Android revokes the PC's authorization
+
+# ============================================================
+# BEFORE FIRST USE
+# ============================================================
+- Pair the phone and PC in KDE Connect at least once (for the fallback).
+- Put your KDE Connect device ID into $deviceId in SendToPhone.ps1
+  (find it with: kdeconnect-cli -l).
+- Connect the PC to the phone's hotspot BEFORE opening the dialog.
+
+# ============================================================
+# PHONE SETTINGS (KDE Connect fallback)
+# ============================================================
+- KDE Connect > Plugin settings > Share and receive: enabled
+- Settings > Apps > Special access > Appear on top: KDE Connect on
+- Settings > Apps > KDE Connect > Battery: Unrestricted
+- Settings > Battery > Background usage limits: KDE Connect not in sleeping / deep sleeping lists
+- Settings > Apps > KDE Connect > Notifications: on, pop-up and lock screen allowed
